@@ -1,0 +1,14 @@
+<!-- remove_actuator.html -->
+<html>
+  <body>
+    <h1>Deletar Atuador</h1>
+    <form action="{{ url_for('actuators.del_actuator') }}" method="post">
+      <select name="atuador" class="Input">
+        {% for key, value in devices.items() %}
+        <option value="{{ key }}">{{ key }}</option>
+        {% endfor %}
+      </select>
+      <p><input type="submit" value="Deletar" /></p>
+    </form>
+  </body>
+</html>

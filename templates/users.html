@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Usuários</h2>
+<table class="table table-bordered">
+  <thead>
+    <tr><th>Nome</th><th>Função</th><th>Ações</th></tr>
+  </thead>
+  <tbody>
+    {% for username, data in users.items() %}
+    <tr>
+      <td>{{ username }}</td>
+      <td>{{ data.role }}</td>
+      <td>
+        {% if username != 'admin' %}
+          <a href="{{ url_for('user.remove_user', username=username) }}" class="btn btn-danger btn-sm">Excluir</a>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<a href="{{ url_for('user.register_user') }}" class="btn btn-success">Adicionar Novo Usuário</a>
+{% endblock %}

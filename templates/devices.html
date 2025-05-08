@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Devices{% endblock %}
+
+{% block content %}
+    <h2>Lista de Dispositivos</h2>
+    <ul>
+        {% for key, value in devices.items() %}
+            <li>{{ key }} : {{ value }}</li>
+        {% endfor %}
+    </ul>
+    <p>Voltar para <a href="/home">página inicial</a>!</p>
+{% endblock %}
