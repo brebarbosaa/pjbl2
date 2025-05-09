@@ -15,16 +15,19 @@
                 </tr>
             </thead>
             <tbody>
-                {% for user in users %}
-                    <tr>
-                        <td>{{ user.id }}</td>
-                        <td>{{ user.username }}</td>
-                        <td>
-                            <form action="{{ url_for('remove_user', user_id=user.id) }}" method="post" onsubmit="return confirm('Tem certeza que deseja remover este usuário?');">
-                                <button type="submit" class="btn btn-danger btn-sm">Remover</button>
-                            </form>
-                        </td>
-                    </tr>
+                {% for username in users %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ username }}</td>
+                    <td>
+                        {% if username != 'admin' %}
+                        <form action="{{ url_for('user.del_user') }}" method="post" onsubmit="return confirm('Tem certeza que deseja remover {{ username }}?');">
+                            <input type="hidden" name="user" value="{{ username }}">
+                            <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>

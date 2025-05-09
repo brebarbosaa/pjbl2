@@ -30,19 +30,19 @@ def add_user():
         user = request.args.get('user', None)
         password = request.args.get('password', None)
     users[user] = {"password": password, "is_admin": False}
-    return render_template('users.html', devices=users)
+    return render_template('users.html', users=users)
 
 @user.route('/list_users')
 @admin_required
 def list_users():
     global users
-    return render_template('users.html', devices=users)
+    return render_template('users.html', users=users)
 
 @user.route('/remove_user')
 @admin_required
 def remove_user():
     global users
-    return render_template('remove_user.html', devices=users)
+    return render_template('remove_users.html', users=users)
 
 @user.route('/del_user', methods=['GET', 'POST'])
 @admin_required
@@ -53,7 +53,7 @@ def del_user():
     else:
         user = request.args.get('user', None)
     users.pop(user)
-    return render_template('users.html', devices=users)
+    return render_template('users.html', users=users)
 
 
 @user.route('/validated_user', methods=['POST'])

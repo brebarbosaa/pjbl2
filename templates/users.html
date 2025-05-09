@@ -9,7 +9,7 @@
     {% for username, data in users.items() %}
     <tr>
       <td>{{ username }}</td>
-      <td>{{ 'Administrador' if data.is_admin else 'Usuário' }}</td>
+      <td>{{ 'Administrador' if data['is_admin'] else 'Usuário' }}</td>
       <td>
         {% if username != 'admin' %}
           <a href="{{ url_for('user.remove_user', username=username) }}" class="btn btn-danger btn-sm">Excluir</a>
