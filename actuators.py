@@ -1,4 +1,5 @@
 from flask import Blueprint, request, render_template
+from decorators import admin_required
 
 actuators = Blueprint("actuators", __name__, template_folder="templates")
 
@@ -11,11 +12,14 @@ def dashboard():
         'Cooler': 'Desligado',
     }
     return render_template('dashboard_atuadores.html', atuadores=atuadores)
+
 @actuators.route('/register_actuator')
+@admin_required
 def register_actuator():
     return render_template('register_actuator.html')
 
 @actuators.route('/add_actuator', methods=['POST'])
+@admin_required
 def add_actuator():
     global atuadores
     if request.method == 'POST':
@@ -28,11 +32,13 @@ def add_actuator():
     return render_template('actuators.html', devices=atuadores)
 
 @actuators.route('/remove_actuator')
+@admin_required
 def remove_actuator():
     global atuadores
     return render_template('remove_actuator.html', devices=atuadores)
 
 @actuators.route('/del_actuator', methods=['GET', 'POST'])
+@admin_required
 def del_actuator():
     global atuadores
     if request.method == 'POST':

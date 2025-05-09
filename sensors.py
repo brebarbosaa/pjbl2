@@ -13,12 +13,13 @@ def dashboard():
     }
     return render_template('dashboard_sensores.html', sensores=lista_sensor)
 
-@admin_required
 @sensors.route('/register_sensor')
+@admin_required
 def register_sensor():
     return render_template('register_sensor.html')
 
 @sensors.route('/add_sensor', methods=['POST'])
+@admin_required
 def add_sensor():
     global lista_sensor
     if request.method == 'POST':
@@ -40,11 +41,13 @@ def add_sensor():
     return render_template('sensors.html', devices=lista_sensor)
 
 @sensors.route('/remove_sensor')
+@admin_required
 def remove_sensor():
     global lista_sensor
     return render_template('remove_sensor.html', devices=lista_sensor)
 
 @sensors.route('/del_sensor', methods=['GET', 'POST'])
+@admin_required
 def del_sensor():
     global lista_sensor
     if request.method == 'POST':

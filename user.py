@@ -12,6 +12,7 @@ users = {
 }
 
 @user.route('/register_user')
+@admin_required
 def register_user():
     if not session.get('is_admin'):
         return '<h1>Acesso negado! Apenas administradores.</h1>'
@@ -19,6 +20,7 @@ def register_user():
 
 
 @user.route('/add_user', methods=['POST'])
+@admin_required
 def add_user():
     global users
     if request.method == 'POST':
@@ -27,21 +29,23 @@ def add_user():
     else:
         user = request.args.get('user', None)
         password = request.args.get('password', None)
-    users[user] = password
+    users[user] = {"password": password, "is_admin": False}
     return render_template('users.html', devices=users)
 
-@admin_required
 @user.route('/list_users')
+@admin_required
 def list_users():
     global users
     return render_template('users.html', devices=users)
 
 @user.route('/remove_user')
+@admin_required
 def remove_user():
     global users
     return render_template('remove_user.html', devices=users)
 
 @user.route('/del_user', methods=['GET', 'POST'])
+@admin_required
 def del_user():
     global users
     if request.method == 'POST':
@@ -69,7 +73,8 @@ def home():
         return redirect(url_for('user.validated_user'))
     return render_template('home.html', user=session['username'])
 
-@user.route('/logout', methods=['POST', 'GET'])
+@user.route('/logout')
 def logout():
     session.clear()
-    return redirect('http://localhost:8081')
+    return redirect('/')
+
