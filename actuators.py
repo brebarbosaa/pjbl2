@@ -4,13 +4,13 @@ from decorators import admin_required
 actuators = Blueprint("actuators", __name__, template_folder="templates")
 
 # Lista de atuadores iniciais (exemplo de status 1 ou 0 para "ligado" ou "desligado")
-@actuators.route('/dashboard')
-def dashboard():
-    atuadores = {
+atuadores = {
         'Servo Motor': 'Desligado',
         'LEDs': 'Ligados',
         'Cooler': 'Desligado',
     }
+@actuators.route('/dashboard')
+def dashboard():
     return render_template('dashboard_atuadores.html', atuadores=atuadores)
 
 @actuators.route('/register_actuator')
@@ -50,6 +50,6 @@ def del_actuator():
     return render_template('actuators.html', devices=atuadores)
 
 @actuators.route('/actuators')
-def atuadores():
+def ver_atuadores():
     global atuadores
     return render_template('actuators.html', devices=atuadores)

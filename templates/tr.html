@@ -1,52 +1,52 @@
-<html>
-    <head>
-        {% block title %}
-        <meta charset="UTF-8">
-        <title>Modulo IOT</title>
-        <meta http-equiv="refresh" content="5">
-        {% endblock %}
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
-        <link rel="stylesheet" href="static/css/style.css" />
-    </head>
-    <body>
-        <!-- Barra de navegação -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+{% extends "base.html" %}
+
+{% block title %}Dados em Tempo Real{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Dados em Tempo Real</h2>
+    <ul class="list-group">
+        <!-- Exibição dos dados -->
+        <li class="list-group-item">
             <a class="navbar-brand" href="#">
-                <img src="static/img/170781.jpg" width="30" height="30" alt="">
+                <img src="{{ url_for('static', filename='img/imagem3.png') }}" width="60" height="60" alt="Temperatura">
             </a>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <ul class="navbar-nav">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+            Temperatura: <span id="temperature">{{ values['temperature'] }} ºC</span>
+        </li>
+        <li class="list-group-item">
+            <a class="navbar-brand" href="#">
+                <img src="{{ url_for('static', filename='img/imagem4.png') }}" width="60" height="60" alt="Umidade">
+            </a>
+            Umidade: <span id="humidity">{{ values['humidity'] }} %</span>
+        </li>
+        <li class="list-group-item">
+            <a class="navbar-brand" href="#">
+                <img src="{{ url_for('static', filename='img/imagem5.png') }}" width="60" height="60" alt="Nivel de Ração">
+            </a>
+            Nível de Ração: <span id="nivel_racao">{{ values['nivel_racao'] }}</span>
+        </li>
+        <li class="list-group-item">
+            <a class="navbar-brand" href="#">
+                <img src="{{ url_for('static', filename='img/imagem6.png') }}" width="60" height="60" alt="Movimento">
+            </a>
+            Movimento: <span id="movimento">{{ values['movimento'] }}</span>
+        </li>
+    </ul>
+</div>
+{% endblock %}
 
-        <!-- Conteúdo da página -->
-        <div id="content">
-            {% block content %} {% endblock %}
-        </div>
+<!-- Scripts do SocketIO -->
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+<script>
+    // Conectar ao SocketIO
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
 
-        <!-- Exibição de valores dinâmicos (exemplo de temperatura e umidade) -->
-        <ul>
-            {% for key, value in values.items() %}
-                <li>
-                    {% if key == 'temperature' %}
-                    <a class="navbar-brand" href="/home">
-                        <img src="static/img/imagem3.png" width="60" height="60" alt="Temperatura">
-                    </a>
-                    <td>{{ value }} ºC</td>
-                    {% else %}
-                    <a class="navbar-brand" href="#">
-                        <img src="static/img/imagem4.png" width="60" height="60" alt="Umidade">
-                    </a>
-                    <td>{{ value }} %</td>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    </body>
-</html>
+    // Receber os valores atualizados do servidor
+    socket.on('update_values', function(data) {
+        document.getElementById('temperature').innerHTML = data.temperature + " ºC";
+        document.getElementById('humidity').innerHTML = data.humidity + " %";
+        document.getElementById('nivel_racao').innerHTML = data.nivel_racao;
+        document.getElementById('movimento').innerHTML = data.movimento;
+    });
+</script>
+

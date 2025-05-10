@@ -3,14 +3,14 @@ from decorators import admin_required
 sensors = Blueprint("sensors", __name__, template_folder="templates")
 
 # Inicializa a lista de sensores (simulando dados de sensores)
-@sensors.route('/dashboard')
-def dashboard():
-    lista_sensor = {
+lista_sensor = {
         'Temperatura': '23.5 ºC',
         'Umidade': '60 %',
         'Movimento': 'Detectado',
         'Distância': '140'
     }
+@sensors.route('/dashboard')
+def dashboard():
     return render_template('dashboard_sensores.html', sensores=lista_sensor)
 
 @sensors.route('/register_sensor')

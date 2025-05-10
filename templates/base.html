@@ -5,36 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Devices{% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-<!-- DEBUG: Admin? {{ session.get('is_admin') }} -->
+
+    <!-- DEBUG: Admin? {{ session.get('is_admin') }} -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="/home">
-            <img src="static/img/logo.png" width="30" height="30" alt="Logo">
+        <a class="navbar-brand" href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" width="30" height="30" alt="Logo">
         </a>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <ul class="navbar-nav">
+                <!-- Home link -->
                 <li class="nav-item active">
-                    <a class="nav-link" href="/home">Home</a>
+                    <a class="nav-link" href="{{ url_for('home') }}">Home</a>
                 </li>
+
+                {% if session.get('username') %}
+                    <!-- Links para páginas de Sensores e Atuadores -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('tempo_real') }}">Tempo Real</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('publish') }}">Comando</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('sensors.sensores') }}">Sensores</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('actuators.ver_atuadores') }}">Atuadores</a>
+                    </li>
+                {% endif %}
+
                 {% if session.get('is_admin') %}
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('user.list_users') }}">Usuários</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('sensors.sensores') }}">Sensores</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('actuators.atuadores') }}">Atuadores</a></li>
+                    <!-- Link para a página de Usuários -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('user.list_users') }}">Usuários</a>
+                    </li>
                 {% endif %}
             </ul>
         </div>
+
+        {% if session.get('username') %}
+            <!-- Botão de logout -->
+            <a href="{{ url_for('user.logout') }}" class="btn btn-outline-light my-2 my-sm-0 ml-auto" role="button">Sair</a>
+        {% endif %}
     </nav>
 
+    <!-- Conteúdo específico da página -->
     <div class="container">
-        {% block content %} {% endblock %}
+        {% block content %}
+        {% endblock %}
     </div>
 
+    <!-- Rodapé -->
     <footer class="bg-dark text-white text-center py-3">
         <p>&copy; 2025 IoT Project. Todos os direitos reservados.</p>
     </footer>
 
+    <!-- Scripts necessários -->
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
 </body>

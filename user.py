@@ -70,7 +70,7 @@ def validated_user():
 @user.route('/home')
 def home():
     if 'username' not in session:
-        return redirect(url_for('user.validated_user'))
+        return redirect(url_for('user.login'))
     return render_template('home.html', user=session['username'])
 
 @user.route('/logout')

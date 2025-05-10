@@ -5,11 +5,12 @@ from actuators import actuators
 from erros import erros_bp
 from flask_mqtt import Mqtt
 from flask_socketio import SocketIO
+import paho.mqtt.client as mqtt
 import json
 
 temperature = 0
 humidity = 0
-nivel_agua = ""
+nivel_racao = ""
 movimento = ""
 
 app = Flask(__name__)
@@ -32,11 +33,13 @@ app.config['MQTT_TLS_ENABLED'] = False
 mqtt_client = Mqtt()
 mqtt_client.init_app(app)
 
+socketio = SocketIO(app)
+
 # Lista de tópicos esperados do ESP32
 topics = [
     "sensor/temperatura",
     "sensor/umidade",
-    "sensor/nivel_agua",
+    "sensor/nivel_racao",
     "sensor/movimento"
 ]
 
@@ -57,24 +60,33 @@ def home():
 
 @app.route('/tempo_real')
 def tempo_real():
-    global temperature, humidity, nivel_agua, movimento
+    global temperature, humidity, nivel_racao, movimento
     values = {
         "temperature": temperature,
         "humidity": humidity,
-        "nivel_agua": nivel_agua,
+        "nivel_racao": nivel_racao,
         "movimento": movimento
     }
+    socketio.emit('update_values', values)
     return render_template("tr.html", values=values)
 
 @app.route('/publish')
 def publish():
     return render_template('publish.html')
 
-@app.route('/publish_message', methods=['GET', 'POST'])
+@app.route('/publish_message', methods=['POST'])
 def publish_message():
     request_data = request.get_json()
-    publish_result = mqtt_client.publish(request_data['topic'], request_data['message'])
-    return jsonify(publish_result)
+    topic = request_data['topic']
+    message = request_data['message']
+
+    # Publica a mensagem no broker MQTT
+    result = mqtt_client.publish(topic, message)
+
+    if result.rc == mqtt.MQTT_ERR_SUCCESS:
+        return jsonify({"status": "Mensagem publicada com sucesso!"}), 200
+    else:
+        return jsonify({"status": "Erro ao publicar mensagem!"}), 400
 
 @mqtt_client.on_connect()
 def handle_connect(client, userdata, flags, rc):
@@ -87,7 +99,7 @@ def handle_connect(client, userdata, flags, rc):
 
 @mqtt_client.on_message()
 def handle_mqtt_message(client, userdata, message):
-    global temperature, humidity, nivel_agua, movimento
+    global temperature, humidity, nivel_racao, movimento
     payload = message.payload.decode()
     topic = message.topic
 
@@ -103,10 +115,18 @@ def handle_mqtt_message(client, userdata, message):
             humidity = float(payload)
         except ValueError:
             humidity = 0
-    elif topic == "sensor/nivel_agua":
-        nivel_agua = payload
+    elif topic == "sensor/nivel_racao":
+        nivel_racao = payload
     elif topic == "sensor/movimento":
         movimento = payload
 
+    # Emitir valores para os clientes
+    socketio.emit('update_values', {
+        "temperature": temperature,
+        "humidity": humidity,
+        "nivel_racao": nivel_racao,
+        "movimento": movimento
+    })
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8081, debug=True)
+    socketio.run(app, host='0.0.0.0', port=8081, debug=True, allow_unsafe_werkzeug=True)
