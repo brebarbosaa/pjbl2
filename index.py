@@ -53,8 +53,8 @@ def logoff():
 
 @app.route('/home')
 def home():
-    user = session.get('user')  # ou como você armazena o login
-    is_admin = session.get('is_admin', False)  # ou outro controle que você tenha
+    user = session.get('user') 
+    is_admin = session.get('is_admin', False) 
     return render_template('home.html', user=user, is_admin=is_admin)
 
 

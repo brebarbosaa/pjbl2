@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Usuários</h2>
+<div class="container mt-5 p-4" style="background-color: rgba(255, 255, 255, 0.95); border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
 <table class="table table-bordered">
   <thead>
     <tr><th>Nome</th><th>Função</th><th>Ações</th></tr>
@@ -20,4 +21,5 @@
   </tbody>
 </table>
 <a href="{{ url_for('user.register_user') }}" class="btn btn-success">Adicionar Novo Usuário</a>
+</div>
 {% endblock %}
