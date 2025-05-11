@@ -80,13 +80,13 @@ def publish_message():
     topic = request_data['topic']
     message = request_data['message']
 
-    # Publica a mensagem no broker MQTT
-    result = mqtt_client.publish(topic, message)
+    try:
+        mqtt_client.publish(topic, message)
+        return json.dumps({"status": "Mensagem publicada com sucesso!"}), 200, {'ContentType': 'application/json'}
+    except Exception as e:
+        print("Erro ao publicar:", str(e))
+        return json.dumps({"status": "Erro ao publicar mensagem"}), 500, {'ContentType': 'application/json'}
 
-    if result.rc == mqtt.MQTT_ERR_SUCCESS:
-        return jsonify({"status": "Mensagem publicada com sucesso!"}), 200
-    else:
-        return jsonify({"status": "Erro ao publicar mensagem!"}), 400
 
 @mqtt_client.on_connect()
 def handle_connect(client, userdata, flags, rc):

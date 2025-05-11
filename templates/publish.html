@@ -1,166 +1,65 @@
 {% extends "base.html" %}
 
-{% block title %}Controle de Atuadores{% endblock %}
+{% block title %}Controle de Dispositivos{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Controle de Atuadores</h2>
-    <div class="switch__container">
-        <input onclick='handleClick(this,this.id);' id="control" class="switch switch--shadow" type="checkbox">
-        <label for="control"></label>
+  <h2 class="mb-4">Controle Remoto dos Dispositivos</h2>
+
+  <!-- Controle do LED da Ração -->
+  <div class="mb-4">
+    <h4>Controle do LED da Ração</h4>
+    <div class="input-group">
+      <select class="form-select" id="led-select">
+        <option value="" selected disabled>Selecione um comando</option>
+        <option value="ligar_led">Ligar LED</option>
+        <option value="desligar_led">Desligar LED</option>
+      </select>
+      <button class="btn btn-primary" onclick="enviarComando('sensor/comando', 'led-select')">Enviar</button>
     </div>
+  </div>
+
+  <!-- Controle do Sensor de Movimento -->
+  <div class="mb-4">
+    <h4>Controle do Sensor de Movimento</h4>
+    <div class="input-group">
+      <select class="form-select" id="movimento-select">
+        <option value="" selected disabled>Selecione um comando</option>
+        <option value="forcar_movimento">Forçar Movimento</option>
+        <option value="forcar_repouso">Forçar Repouso</option>
+      </select>
+      <button class="btn btn-primary" onclick="enviarComando('sensor/comando2', 'movimento-select')">Enviar</button>
+    </div>
+  </div>
+
+  <!-- Resultado -->
+  <div id="status" class="mt-3"></div>
 </div>
 
-<script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js"></script>
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.0/socket.io.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-
 <script>
-    function handleClick(cb, id) {
-        var topic = "";
-        if (id == "control") {
-            topic = "/actuator";
-        }
+function enviarComando(topico, selectId) {
+  const valor = document.getElementById(selectId).value;
 
-        var data = "";
-        if (cb.checked) {
-            data = "1";
-        } else {
-            data = "0";
-        }
+  if (!valor) {
+    document.getElementById("status").innerHTML = `<div class="alert alert-warning">Escolha um comando primeiro.</div>`;
+    return;
+  }
 
-        $.ajax({
-            url: "{{ url_for('publish_message') }}",  // URL do endpoint do Flask para publicação
-            contentType: 'application/json;charset=UTF-8',
-            cache: false,
-            method: 'POST',
-            dataType: 'json',
-            data: JSON.stringify({
-                message: data,
-                topic: topic
-            }),
-            success: function (data) {
-                console.log('Mensagem enviada: ', data);
-            },
-            error: function (error) {
-                console.log('Erro ao enviar mensagem: ', error);
-            }
-        });
-    }
+  fetch("{{ url_for('publish_message') }}", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ topic: topico, message: valor }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      document.getElementById("status").innerHTML = `<div class="alert alert-success">${data.status}</div>`;
+    })
+    .catch((error) => {
+      console.error("Erro ao publicar:", error);
+      document.getElementById("status").innerHTML = `<div class="alert alert-danger">Erro ao publicar o comando.</div>`;
+    });
+}
 </script>
-
-<style>
-    /* Estilo para o Switch */
-    .switch__container {
-        margin: 30px auto;
-        width: 120px;
-    }
-
-    .switch {
-        visibility: hidden;
-        position: absolute;
-        margin-left: -9999px;
-    }
-
-    .switch + label {
-        display: block;
-        position: relative;
-        cursor: pointer;
-        outline: none;
-        user-select: none;
-    }
-
-    .switch--shadow + label {
-        padding: 2px;
-        width: 120px;
-        height: 60px;
-        background-color: #dddddd;
-        border-radius: 60px;
-    }
-
-    .switch--shadow + label:before,
-    .switch--shadow + label:after {
-        display: block;
-        position: absolute;
-        top: 1px;
-        left: 1px;
-        bottom: 1px;
-        content: "";
-    }
-
-    .switch--shadow + label:before {
-        right: 1px;
-        background-color: #f1f1f1;
-        border-radius: 60px;
-        transition: background 0.4s;
-    }
-
-    .switch--shadow + label:after {
-        width: 62px;
-        background-color: #fff;
-        border-radius: 100%;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-        transition: all 0.4s;
-    }
-
-    .switch--shadow:checked + label:before {
-        background-color: #8ce196;
-    }
-
-    .switch--shadow:checked + label:after {
-        transform: translateX(60px);
-    }
-
-    /* Estilo Flat */
-    .switch--flat + label {
-        padding: 2px;
-        width: 120px;
-        height: 60px;
-        background-color: #dddddd;
-        border-radius: 60px;
-        transition: background 0.4s;
-    }
-
-    .switch--flat + label:before,
-    .switch--flat + label:after {
-        display: block;
-        position: absolute;
-        content: "";
-    }
-
-    .switch--flat + label:before {
-        top: 2px;
-        left: 2px;
-        bottom: 2px;
-        right: 2px;
-        background-color: #fff;
-        border-radius: 60px;
-        transition: background 0.4s;
-    }
-
-    .switch--flat + label:after {
-        top: 4px;
-        left: 4px;
-        bottom: 4px;
-        width: 56px;
-        background-color: #dddddd;
-        border-radius: 52px;
-        transition: margin 0.4s, background 0.4s;
-    }
-
-    .switch--flat:checked + label {
-        background-color: #8ce196;
-    }
-
-    .switch--flat:checked + label:after {
-        margin-left: 60px;
-        background-color: #8ce196;
-    }
-</style>
-
 {% endblock %}
