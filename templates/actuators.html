@@ -1,4 +1,3 @@
-<!-- actuators.html -->
 {% extends "base.html" %}
 
 {% block content %}
@@ -11,7 +10,9 @@
           <tr>
             <th>Atuador</th>
             <th>Valor</th>
+            {% if session.get('is_admin') %}
             <th>Deletar</th>
+            {% endif %}
           </tr>
         </thead>
         <tbody>
@@ -19,19 +20,25 @@
           <tr>
             <td>{{ key }}</td>
             <td>{{ value }}</td>
+            {% if session.get('is_admin') %}
             <td><a href="{{ url_for('actuators.del_actuator', atuador=key) }}" class="btn btn-danger btn-sm">Deletar</a></td>
+            {% endif %}
           </tr>
           {% endfor %}
         </tbody>
       </table>
+      {% if session.get('is_admin') %}
       <form action="{{ url_for('actuators.register_actuator') }}">
         <p><input type="submit" class="btn btn-success" value="Adicionar Atuador" /></p>
       </form>
+      {% endif %}
       {% else %}
       <p>Ainda não há atuadores registrados!</p>
+      {% if session.get('is_admin') %}
       <form action="{{ url_for('actuators.register_actuator') }}">
         <p><input type="submit" class="btn btn-success" value="Adicionar Atuador" /></p>
       </form>
+      {% endif %}
       {% endif %}
     </div>
   </div>

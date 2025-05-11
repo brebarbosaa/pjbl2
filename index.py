@@ -33,7 +33,7 @@ app.config['MQTT_TLS_ENABLED'] = False
 mqtt_client = Mqtt()
 mqtt_client.init_app(app)
 
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Lista de tópicos esperados do ESP32
 topics = [
