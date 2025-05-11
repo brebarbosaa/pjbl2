@@ -8,11 +8,15 @@
       <div class="card-header">
         <div class="card-body">
           <form action="{{ url_for('sensors.add_sensor') }}" method="post">
-            <p>Sensor:</p>
-            <p><input type="text" name="sensor" placeholder="Nome do Sensor" required /></p>
-            <p>Valor:</p>
-            <p><input type="text" name="valor" placeholder="Valor" required /></p>
-            <p><input type="submit" value="Cadastrar" /></p>
+            <div class="mb-3">
+            <label for="atuador" class="form-label">Sensor:</label>
+            <input type="text" class="form-control" id="sensor" name="sensor" placeholder="Nome do Sensor" required>
+          </div>
+          <div class="mb-3">
+            <label for="valor" class="form-label">Valor:</label>
+            <input type="text" class="form-control" id="valor" name="valor" placeholder="Valor" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Cadastrar</button>
           </form>
         </div>
       </div>
