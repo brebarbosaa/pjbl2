@@ -4,41 +4,47 @@
 <div class="vertical-center">
   <div class="container mt-5 p-4" style="background-color: rgba(255, 255, 255, 0.95); border-radius: 10px;">
     <div class="justify-content-center">
-      {% if devices|length > 0 %}
+      {% if actuators %}
       <table id="view_actuators" class="table table-striped table-bordered" style="width:100%">
         <thead>
           <tr>
-            <th>Atuador</th>
-            <th>Valor</th>
+            <th>Nome</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>Unidade</th>
+            <th>Tópico</th>
+            <th>Ativo</th>
             {% if session.get('is_admin') %}
-            <th>Deletar</th>
+            <th>Ações</th>
             {% endif %}
           </tr>
         </thead>
         <tbody>
-          {% for key, value in devices.items() %}
+          {% for act in actuators %}
           <tr>
-            <td>{{ key }}</td>
-            <td>{{ value }}</td>
+            <td>{{ act.name }}</td>
+            <td>{{ act.brand }}</td>
+            <td>{{ act.model }}</td>
+            <td>{{ act.unit }}</td>
+            <td>{{ act.topic }}</td>
+            <td>{{ 'Sim' if act.is_active else 'Não' }}</td>
             {% if session.get('is_admin') %}
-            <td><a href="{{ url_for('actuators.del_actuator', atuador=key) }}" class="btn btn-danger btn-sm">Deletar</a></td>
+            <td>
+              <a href="{{ url_for('actuator_.edit_actuator', id=act.device_id) }}" class="btn btn-warning btn-sm">Editar</a>
+              <a href="{{ url_for('actuator_.del_actuator', id=act.device_id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja deletar este atuador?')">Deletar</a>
+            </td>
             {% endif %}
           </tr>
           {% endfor %}
         </tbody>
       </table>
-      {% if session.get('is_admin') %}
-      <form action="{{ url_for('actuators.register_actuator') }}">
-        <p><input type="submit" class="btn btn-success" value="Adicionar Atuador" /></p>
-      </form>
-      {% endif %}
       {% else %}
-      <p>Ainda não há atuadores registrados!</p>
+        <p>Ainda não há atuadores registrados!</p>
+      {% endif %}
       {% if session.get('is_admin') %}
-      <form action="{{ url_for('actuators.register_actuator') }}">
+      <form action="{{ url_for('actuator_.register_actuator') }}">
         <p><input type="submit" class="btn btn-success" value="Adicionar Atuador" /></p>
       </form>
-      {% endif %}
       {% endif %}
     </div>
   </div>

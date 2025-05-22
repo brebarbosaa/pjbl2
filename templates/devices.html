@@ -1,13 +1,17 @@
 {% extends 'base.html' %}
 
-{% block title %}Devices{% endblock %}
+{% block title %}Dispositivos{% endblock %}
 
 {% block content %}
-    <h2>Lista de Dispositivos</h2>
-    <ul>
-        {% for key, value in devices.items() %}
-            <li>{{ key }} : {{ value }}</li>
-        {% endfor %}
-    </ul>
-    <p>Voltar para <a href="/home">página inicial</a>!</p>
+<div class="container mt-5">
+  <h2>Lista de Dispositivos</h2>
+  <ul class="list-group">
+    {% for device in devices %}
+      <li class="list-group-item">
+        <strong>{{ device.name }}</strong> - {{ device.brand }} {{ device.model }} (Ativo: {{ 'Sim' if device.is_active else 'Não' }})
+      </li>
+    {% endfor %}
+  </ul>
+  <p class="mt-3">Voltar para <a href="/home">página inicial</a>.</p>
+</div>
 {% endblock %}

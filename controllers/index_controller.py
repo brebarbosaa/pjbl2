@@ -1,0 +1,127 @@
+# controllers/app_controller.py
+from flask import Flask, render_template, session
+from flask_socketio import SocketIO
+from flask_mqtt import Mqtt
+import json
+
+# Importar seus Blueprints
+from controllers.user_controller import user
+from controllers.sensors_controller import sensor_
+from controllers.actuators_controller import actuator_
+from controllers.error_controller import erros_bp
+
+temperature = 0
+humidity = 0
+nivel_racao = ""
+movimento = ""
+
+socketio = SocketIO(cors_allowed_origins="*")
+mqtt_client = Mqtt()
+topics = [
+    "sensor/temperatura",
+    "sensor/umidade",
+    "sensor/nivel_racao",
+    "sensor/movimento"
+]
+
+def create_app():
+    app = Flask(__name__)
+    app.config['SECRET_KEY'] = 'admin123@@'
+
+    # MQTT config
+    app.config['MQTT_BROKER_URL'] = 'broker.emqx.io'
+    app.config['MQTT_BROKER_PORT'] = 1883
+    app.config['MQTT_USERNAME'] = ''
+    app.config['MQTT_PASSWORD'] = ''
+    app.config['MQTT_KEEPALIVE'] = 60
+    app.config['MQTT_TLS_ENABLED'] = False
+
+    mqtt_client.init_app(app)
+    socketio.init_app(app)
+
+    # Register Blueprints
+    app.register_blueprint(user, url_prefix='/')
+    app.register_blueprint(sensors, url_prefix='/')
+    app.register_blueprint(actuator_, url_prefix='/')
+    app.register_blueprint(erros_bp, url_prefix='/')
+
+    @app.route('/')
+    def index():
+        return render_template("login.html")
+
+    @app.route('/logoff')
+    def logoff():
+        return render_template("login.html")
+
+    @app.route('/home')
+    def home():
+        user = session.get('user')
+        is_admin = session.get('is_admin', False)
+        return render_template('home.html', user=user, is_admin=is_admin)
+
+    @app.route('/tempo_real')
+    def tempo_real():
+        values = {
+            "temperature": temperature,
+            "humidity": humidity,
+            "nivel_racao": nivel_racao,
+            "movimento": movimento
+        }
+        socketio.emit('update_values', values)
+        return render_template("tr.html", values=values)
+
+    @app.route('/publish')
+    def publish():
+        return render_template('publish.html')
+
+    @app.route('/publish_message', methods=['POST'])
+    def publish_message():
+        request_data = request.get_json()
+        topic = request_data['topic']
+        message = request_data['message']
+        try:
+            mqtt_client.publish(topic, message)
+            return json.dumps({"status": "Mensagem publicada com sucesso!"}), 200
+        except Exception as e:
+            print("Erro ao publicar:", str(e))
+            return json.dumps({"status": "Erro ao publicar mensagem"}), 500
+
+    @mqtt_client.on_connect()
+    def handle_connect(client, userdata, flags, rc):
+        if rc == 0:
+            print('Broker conectado com sucesso!')
+            for t in topics:
+                mqtt_client.subscribe(t)
+        else:
+            print('Erro na conexão. Código:', rc)
+
+    @mqtt_client.on_message()
+    def handle_mqtt_message(client, userdata, message):
+        nonlocal temperature, humidity, nivel_racao, movimento
+        payload = message.payload.decode()
+        topic = message.topic
+        print(f"Mensagem recebida | Tópico: {topic} | Conteúdo: {payload}")
+
+        if topic == "sensor/temperatura":
+            try:
+                temperature = float(payload)
+            except ValueError:
+                temperature = 0
+        elif topic == "sensor/umidade":
+            try:
+                humidity = float(payload)
+            except ValueError:
+                humidity = 0
+        elif topic == "sensor/nivel_racao":
+            nivel_racao = payload
+        elif topic == "sensor/movimento":
+            movimento = payload
+
+        socketio.emit('update_values', {
+            "temperature": temperature,
+            "humidity": humidity,
+            "nivel_racao": nivel_racao,
+            "movimento": movimento
+        })
+
+    return app
