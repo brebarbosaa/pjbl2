@@ -32,6 +32,18 @@
     </div>
   </div>
 
+  <!-- Controle do Servo Motor -->
+  <div class="mb-4">
+    <h4>Controle do Servo Motor</h4>
+    <div class="input-group">
+      <select class="form-select" id="servo-select">
+        <option value="" selected disabled>Selecione um comando</option>
+        <option value="despejar">Despejar Ração</option>
+      </select>
+      <button class="btn btn-primary" onclick="enviarComando('sensor/servo', 'servo-select')">Enviar</button>
+    </div>
+  </div>
+
   <!-- Resultado -->
   <div id="status" class="mt-3"></div>
 </div>
