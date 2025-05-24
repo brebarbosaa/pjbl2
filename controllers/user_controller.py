@@ -1,15 +1,9 @@
 from flask import Blueprint, request, render_template, redirect, session, url_for
+from models.users.user_model import User
+from models.db import db
 from decorators import admin_required
 
 user = Blueprint("user", __name__, template_folder="templates")
-
-user.secret_key = "admin123@@"
-
-users = {
-    "admin": {"password": "admin123", "is_admin": True},
-    "user1": {"password": "123", "is_admin": False},
-    "user2": {"password": "1234", "is_admin": False}
-}
 
 @user.route('/register_user')
 @admin_required
@@ -18,24 +12,21 @@ def register_user():
         return '<h1>Acesso negado! Apenas administradores.</h1>'
     return render_template('register_user.html')
 
-
 @user.route('/add_user', methods=['POST'])
 @admin_required
 def add_user():
-    global users
-    if request.method == 'POST':
-        user = request.form['user']
-        password = request.form['password']
-    else:
-        user = request.args.get('user', None)
-        password = request.args.get('password', None)
-    users[user] = {"password": password, "is_admin": False}
+    username = request.form['user']
+    password = request.form['password']
+    new_user = User(username=username, password=password, is_admin=False)
+    db.session.add(new_user)
+    db.session.commit()
+    users = User.query.all()
     return render_template('users.html', users=users)
 
 @user.route('/list_users')
 @admin_required
 def list_users():
-    global users
+    users = User.query.all()
     return render_template('users.html', users=users)
 
 @user.route('/remove_user')
@@ -44,28 +35,31 @@ def remove_user():
     global users
     return render_template('remove_users.html', users=users)
 
-@user.route('/del_user', methods=['GET', 'POST'])
+@user.route('/del_user', methods=['POST'])
 @admin_required
 def del_user():
-    global users
-    if request.method == 'POST':
-        user = request.form['user']
-    else:
-        user = request.args.get('user', None)
-    users.pop(user)
+    username = request.form['user']
+    user = User.query.filter_by(username=username).first()
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+    users = User.query.all()
     return render_template('users.html', users=users)
-
 
 @user.route('/validated_user', methods=['POST'])
 def validated_user():
-    user_input = request.form['user']
-    password_input = request.form['password']
-    if user_input in users and users[user_input]["password"] == password_input:
-        session['username'] = user_input
-        session['is_admin'] = users[user_input]["is_admin"]
+    username = request.form['user']
+    password = request.form['password']
+
+    user = User.query.filter_by(username=username).first()
+
+    if user and user.password == password:
+        # Se o usuário for admin, verifique se já existe outro admin logado (opcional, se quiser garantir 1 admin logado)
+        session['username'] = user.username
+        session['is_admin'] = user.is_admin
         return redirect(url_for('user.home'))
-    else:
-        return '<h1>Invalid Credentials!</h1>'
+
+    return render_template("login.html", error="Credenciais inválidas.")
 
 @user.route('/home')
 def home():
@@ -77,4 +71,3 @@ def home():
 def logout():
     session.clear()
     return redirect('/')
-

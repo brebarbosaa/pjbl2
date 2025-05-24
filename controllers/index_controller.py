@@ -1,14 +1,14 @@
 # controllers/app_controller.py
-from flask import Flask, render_template, session
+from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO
 from flask_mqtt import Mqtt
 import json
+from models.db import db, instance
 
 # Importar seus Blueprints
 from controllers.user_controller import user
 from controllers.sensors_controller import sensor_
 from controllers.actuators_controller import actuator_
-from controllers.error_controller import erros_bp
 
 temperature = 0
 humidity = 0
@@ -25,8 +25,16 @@ topics = [
 ]
 
 def create_app():
-    app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'admin123@@'
+    app = Flask(__name__,
+                template_folder="./templates/",
+                static_folder="./static/",
+                root_path="./")
+    #app.config['SECRET_KEY'] = 'admin123@@'
+
+    app.config['TESTING'] = False
+    app.config['SECRET_KEY'] = 'generated-secrete-key'
+    app.config['SQLALCHEMY_DATABASE_URI'] = instance
+    db.init_app(app)
 
     # MQTT config
     app.config['MQTT_BROKER_URL'] = 'broker.emqx.io'
@@ -41,9 +49,8 @@ def create_app():
 
     # Register Blueprints
     app.register_blueprint(user, url_prefix='/')
-    app.register_blueprint(sensors, url_prefix='/')
+    app.register_blueprint(sensor_, url_prefix='/')
     app.register_blueprint(actuator_, url_prefix='/')
-    app.register_blueprint(erros_bp, url_prefix='/')
 
     @app.route('/')
     def index():
@@ -97,7 +104,7 @@ def create_app():
 
     @mqtt_client.on_message()
     def handle_mqtt_message(client, userdata, message):
-        nonlocal temperature, humidity, nivel_racao, movimento
+        global temperature, humidity, nivel_racao, movimento
         payload = message.payload.decode()
         topic = message.topic
         print(f"Mensagem recebida | Tópico: {topic} | Conteúdo: {payload}")

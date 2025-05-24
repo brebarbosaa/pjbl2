@@ -32,7 +32,7 @@ def actuators():
 @admin_required
 def edit_actuator():
     id = request.args.get('id')
-    actuator = Actuator.get_single_actuator(id)
+    actuator = Actuator.query.filter_by(id=id).first()
     return render_template("update_actuator.html", actuator=actuator)
 
 @actuator_.route('/update_actuator', methods=['POST'])

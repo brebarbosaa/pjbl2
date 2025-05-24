@@ -3,22 +3,37 @@
 {% block content %}
 <div class="vertical-center">
   <div class="container">
-    <div class="card mt-4">
+    <div class="card">
       <div class="card-header">
-        <h5>Cadastrar Atuador</h5>
-      </div>
-      <div class="card-body">
-        <form action="{{ url_for('actuators.add_actuator') }}" method="post">
-          <div class="mb-3">
-            <label for="atuador" class="form-label">Atuador:</label>
-            <input type="text" class="form-control" id="atuador" name="atuador" placeholder="Nome do Atuador" required>
-          </div>
-          <div class="mb-3">
-            <label for="valor" class="form-label">Valor:</label>
-            <input type="text" class="form-control" id="valor" name="valor" placeholder="Valor" required>
-          </div>
-          <button type="submit" class="btn btn-primary">Cadastrar</button>
-        </form>
+        <div class="card-body">
+          <form action="{{ url_for('actuator_.add_actuator') }}" method="post">
+            <div class="mb-3">
+              <label for="name" class="form-label">Nome:</label>
+              <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+              <label for="brand" class="form-label">Marca:</label>
+              <input type="text" class="form-control" id="brand" name="brand" required>
+            </div>
+            <div class="mb-3">
+              <label for="model" class="form-label">Modelo:</label>
+              <input type="text" class="form-control" id="model" name="model" required>
+            </div>
+            <div class="mb-3">
+              <label for="topic" class="form-label">Tópico MQTT:</label>
+              <input type="text" class="form-control" id="topic" name="topic" required>
+            </div>
+            <div class="mb-3">
+              <label for="unit" class="form-label">Unidade:</label>
+              <input type="text" class="form-control" id="unit" name="unit" required>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="is_active" name="is_active">
+              <label class="form-check-label" for="is_active">Ativo</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Cadastrar</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>

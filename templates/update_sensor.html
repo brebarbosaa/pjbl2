@@ -1,0 +1,51 @@
+<!-- templates/update_sensor.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="vertical-center">
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        Editar Sensor
+      </div>
+      <div class="card-body">
+        <form action="{{ url_for('sensor_.update_sensor') }}" method="post">
+          <input type="hidden" name="id" value="{{ sensor.id }}">
+
+          <div class="mb-3">
+            <label for="name" class="form-label">Nome do Dispositivo</label>
+            <input type="text" class="form-control" name="name" id="name" value="{{ sensor.device.name }}" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="brand" class="form-label">Marca</label>
+            <input type="text" class="form-control" name="brand" id="brand" value="{{ sensor.device.brand }}" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="model" class="form-label">Modelo</label>
+            <input type="text" class="form-control" name="model" id="model" value="{{ sensor.device.model }}" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="topic" class="form-label">Tópico</label>
+            <input type="text" class="form-control" name="topic" id="topic" value="{{ sensor.topic }}" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="unit" class="form-label">Unidade</label>
+            <input type="text" class="form-control" name="unit" id="unit" value="{{ sensor.unit }}" required>
+          </div>
+
+          <div class="form-check mb-3">
+            <input type="checkbox" class="form-check-input" name="is_active" id="is_active" {% if sensor.is_active %}checked{% endif %}>
+            <label class="form-check-label" for="is_active">Ativo</label>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,6 +1,14 @@
 from flask import Blueprint, render_template
+from sqlalchemy.exc import SQLAlchemyError
 
 erros_bp = Blueprint('erros', __name__)
+
+@erros_bp.app_errorhandler(SQLAlchemyError)
+def erro_sqlalchemy(error):
+    return render_template('erro_generico.html',
+                           codigo=500,
+                           titulo="Erro no banco de dados",
+                           mensagem="Ocorreu um problema ao acessar os dados. Tente novamente mais tarde."), 500
 
 @erros_bp.app_errorhandler(401)
 def erro_401(error):
