@@ -12,11 +12,7 @@ class Read(db.Model):
     value = db.Column(db.Float, nullable=True)
 
     @staticmethod
-    def save_read(topic, value):
-        sensor = Sensor.query.filter_by(topic=topic).first()
-        if sensor is None:
-            print(f"[ERRO] Sensor com tópico {topic} não encontrado.")
-            return
+    def save_read(sensor, value):
         device = Device.query.get(sensor.device_id)
         if device and device.is_active:
             read = Read(

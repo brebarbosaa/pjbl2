@@ -1,14 +1,19 @@
-<!-- remove_actuator.html -->
-<html>
-  <body>
-    <h1>Deletar Atuador</h1>
-    <form action="{{ url_for('actuators.del_actuator') }}" method="post">
-      <select name="atuador" class="Input">
-        {% for key, value in devices.items() %}
-        <option value="{{ key }}">{{ key }}</option>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Deletar Atuador</h2>
+  <form action="http://localhost:8081/del_actuator" method="post">
+    <div class="mb-3">
+      <label for="actuator" class="form-label">Selecione um atuador</label>
+      <select name="id" id="actuator" class="form-select" required>
+        {% for actuator in actuators %}
+          <option value="{{ actuator.device.id }}">{{ actuator.device.name }} ({{ actuator.topic }})</option>
         {% endfor %}
       </select>
-      <button type="submit" class="btn btn-danger btn-sm">Deletar</button>
-    </form>
-  </body>
-</html>
+    </div>
+    <button type="submit" class="btn btn-danger">Deletar</button>
+  </form>
+</div>
+{% endblock %}
+

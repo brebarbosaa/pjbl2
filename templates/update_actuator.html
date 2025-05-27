@@ -1,4 +1,3 @@
-<!-- templates/update_actuator.html -->
 {% extends "base.html" %}
 
 {% block content %}
@@ -14,17 +13,17 @@
 
           <div class="mb-3">
             <label for="name" class="form-label">Nome do Dispositivo</label>
-            <input type="text" class="form-control" name="name" id="name" value="{{ actuator.name }}" required>
+            <input type="text" class="form-control" name="name" id="name" value="{{ actuator.device.name }}" required>
           </div>
 
           <div class="mb-3">
             <label for="brand" class="form-label">Marca</label>
-            <input type="text" class="form-control" name="brand" id="brand" value="{{ actuator.brand }}" required>
+            <input type="text" class="form-control" name="brand" id="brand" value="{{ actuator.device.brand }}" required>
           </div>
 
           <div class="mb-3">
             <label for="model" class="form-label">Modelo</label>
-            <input type="text" class="form-control" name="model" id="model" value="{{ actuator.model }}" required>
+            <input type="text" class="form-control" name="model" id="model" value="{{ actuator.device.model }}" required>
           </div>
 
           <div class="mb-3">
@@ -33,7 +32,7 @@
           </div>
 
           <div class="mb-3">
-            <label for="unit" class="form-label">Unidade</label>
+            <label for="topic" class="form-label">Unidade</label>
             <input type="text" class="form-control" name="unit" id="unit" value="{{ actuator.unit }}" required>
           </div>
 

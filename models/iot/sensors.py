@@ -66,8 +66,8 @@ class Sensor(db.Model):
 
     @staticmethod
     def delete_sensor(id):
-        sensor = Sensor.query.filter_by(device_id=id).first()
         device = Device.query.get(id)
+        sensor = Sensor.query.filter_by(device_id=id).first()
 
         if sensor:
             db.session.delete(sensor)

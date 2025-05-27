@@ -4,11 +4,18 @@ from flask_socketio import SocketIO
 from flask_mqtt import Mqtt
 import json
 from models.db import db, instance
+from flask import current_app
 
 # Importar seus Blueprints
 from controllers.user_controller import user
 from controllers.sensors_controller import sensor_
 from controllers.actuators_controller import actuator_
+from controllers.reads_controller import read
+from controllers.writes_controller import write
+from models.iot.read import Read
+from models.iot.sensors import Sensor
+from models.iot.actuators import Actuator
+from models.iot.write import Write
 
 temperature = 0
 humidity = 0
@@ -51,6 +58,8 @@ def create_app():
     app.register_blueprint(user, url_prefix='/')
     app.register_blueprint(sensor_, url_prefix='/')
     app.register_blueprint(actuator_, url_prefix='/')
+    app.register_blueprint(read, url_prefix='/')
+    app.register_blueprint(write, url_prefix='/')
 
     @app.route('/')
     def index():
@@ -104,11 +113,13 @@ def create_app():
 
     @mqtt_client.on_message()
     def handle_mqtt_message(client, userdata, message):
+
         global temperature, humidity, nivel_racao, movimento
         payload = message.payload.decode()
         topic = message.topic
         print(f"Mensagem recebida | Tópico: {topic} | Conteúdo: {payload}")
 
+        # Atualiza valores para tela tempo_real
         if topic == "sensor/temperatura":
             try:
                 temperature = float(payload)
@@ -130,5 +141,25 @@ def create_app():
             "nivel_racao": nivel_racao,
             "movimento": movimento
         })
+
+        # Salvar leitura ou comando com contexto correto
+        with app.app_context():
+            try:
+                sensor = Sensor.query.filter_by(topic=topic).first()
+                if sensor:
+                    try:
+                        # Extrai só o número no início da mensagem
+                        number_str = payload.split()[0]
+                        value = float(number_str)
+                    except (ValueError, IndexError):
+                        value = payload  # mantém string original se falhar
+
+                    Read.save_read(sensor, value)
+                else:
+                    actuator = Actuator.query.filter_by(topic=topic).first()
+                    if actuator:
+                        Write.save_write(actuator, payload)
+            except Exception as e:
+                print("Erro ao salvar leitura ou comando no banco:", str(e))
 
     return app

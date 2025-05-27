@@ -1,5 +1,7 @@
-from flask import Blueprint, request, render_template
+from flask import Blueprint, request, render_template, flash, redirect, url_for
 from decorators import admin_required
+from models import db
+from models.iot.devices import Device
 from models.iot.sensors import Sensor
 
 sensor_ = Blueprint('sensor_', __name__, template_folder='templates')
@@ -49,9 +51,21 @@ def update_sensor():
     sensors = Sensor.update_sensor(id, name, brand, model, topic, unit, is_active)
     return render_template("sensors.html", sensors=sensors)
 
-@sensor_.route('/del_sensor')
+@sensor_.route('/remove_sensor')
+@admin_required
+def remove_sensor():
+    sensors = Sensor.query.all()
+    return render_template("remove_sensor.html", sensors=sensors)
+
+@sensor_.route('/del_sensor', methods=['GET', 'POST'])
 @admin_required
 def del_sensor():
-    id = request.args.get('id')
-    sensors = Sensor.delete_sensor(id)
+    if request.method == 'POST':
+        id = request.form.get('id')
+    else:
+        id = request.args.get('id')
+
+    if id:
+        Sensor.delete_sensor(id)
+    sensors = Sensor.get_sensors()
     return render_template("sensors.html", sensors=sensors)

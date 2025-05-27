@@ -20,18 +20,18 @@
           </tr>
         </thead>
         <tbody>
-          {% for act in actuators %}
+          {% for actuator in actuators %}
           <tr>
-            <td>{{ act.name }}</td>
-            <td>{{ act.brand }}</td>
-            <td>{{ act.model }}</td>
-            <td>{{ act.unit }}</td>
-            <td>{{ act.topic }}</td>
-            <td>{{ 'Sim' if act.is_active else 'Não' }}</td>
+            <td>{{ actuator.name }}</td>
+            <td>{{ actuator.brand }}</td>
+            <td>{{ actuator.model }}</td>
+            <td>{{ actuator.unit }}</td>
+            <td>{{ actuator.topic }}</td>
+            <td>{{ 'Sim' if actuator.is_active else 'Não' }}</td>
             {% if session.get('is_admin') %}
             <td>
-              <a href="{{ url_for('actuator_.edit_actuator', id=act.device_id) }}" class="btn btn-warning btn-sm">Editar</a>
-              <a href="{{ url_for('actuator_.del_actuator', id=act.device_id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja deletar este atuador?')">Deletar</a>
+              <a href="{{ url_for('actuator_.edit_actuator', id=actuator.device_id) }}" class="btn btn-warning btn-sm">Editar</a>
+              <a href="{{ url_for('actuator_.del_actuator', id=actuator.device_id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja deletar este atuador?')">Deletar</a>
             </td>
             {% endif %}
           </tr>

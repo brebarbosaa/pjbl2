@@ -36,8 +36,15 @@
                   <a class="nav-link" href="{{ url_for('sensor_.sensors') }}">Sensores</a>
                 </li>
                 <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('read.history_read') }}">Histórico de Leituras</a>
+                </li>
+                <li class="nav-item">
                   <a class="nav-link" href="{{ url_for('actuator_.actuators') }}">Atuadores</a>
                 </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('write.history_write') }}">Histórico de Atuações</a>
+                </li>
+
               {% endif %}
       
               {% if session.get('is_admin') %}

@@ -48,27 +48,25 @@ class Actuator(db.Model):
         ).filter(Device.id == id).first()
 
     @staticmethod
-    def update_actuator(actuator_id, name, brand, model, topic, unit, is_active):
-        actuator = Actuator.query.get(actuator_id)
-        if actuator is None or actuator.device is None:
-            return []
+    def update_actuator(id, name, brand, model, topic, unit, is_active):
+        device = Device.query.get(id)
+        actuator = Actuator.query.filter_by(device_id=id).first()
 
-        device = actuator.device
-        device.name = name
-        device.brand = brand
-        device.model = model
-        device.is_active = is_active
+        if device and actuator:
+            device.name = name
+            device.brand = brand
+            device.model = model
+            device.is_active = is_active
+            actuator.topic = topic
+            actuator.unit = unit
+            db.session.commit()
 
-        actuator.topic = topic
-        actuator.unit = unit
-
-        db.session.commit()
         return Actuator.get_actuators()
 
     @staticmethod
     def delete_actuator(id):
-        actuator = Actuator.query.filter_by(device_id=id).first()
         device = Device.query.get(id)
+        actuator = Actuator.query.filter_by(device_id=id).first()
 
         if actuator:
             db.session.delete(actuator)
@@ -77,3 +75,4 @@ class Actuator(db.Model):
         db.session.commit()
 
         return Actuator.get_actuators()
+
