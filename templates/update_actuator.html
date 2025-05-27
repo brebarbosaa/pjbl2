@@ -8,22 +8,22 @@
         Editar Atuador
       </div>
       <div class="card-body">
-        <form action="{{ url_for('actuator_.update_actuator') }}" method="post">
-          <input type="hidden" name="id" value="{{ actuator.id }}">
+        <form action="http://localhost:8081/update_actuator" method="post">
+          <input type="hidden" name="id" value="{{ actuator.device.id }}">
 
           <div class="mb-3">
             <label for="name" class="form-label">Nome do Dispositivo</label>
-            <input type="text" class="form-control" name="name" id="name" value="{{ actuator.device.name }}" required>
+            <input type="text" class="form-control" name="name" id="name" value="{{ actuator.name }}" required>
           </div>
 
           <div class="mb-3">
             <label for="brand" class="form-label">Marca</label>
-            <input type="text" class="form-control" name="brand" id="brand" value="{{ actuator.device.brand }}" required>
+            <input type="text" class="form-control" name="brand" id="brand" value="{{ actuator.brand }}" required>
           </div>
 
           <div class="mb-3">
             <label for="model" class="form-label">Modelo</label>
-            <input type="text" class="form-control" name="model" id="model" value="{{ actuator.device.model }}" required>
+            <input type="text" class="form-control" name="model" id="model" value="{{ actuator.model }}" required>
           </div>
 
           <div class="mb-3">
@@ -37,7 +37,7 @@
           </div>
 
           <div class="form-check mb-3">
-            <input type="checkbox" class="form-check-input" name="is_active" id="is_active" {% if actuator.is_active %}checked{% endif %}>
+            <input type="checkbox" class="form-check-input" name="is_active" id="is_active" checked />
             <label class="form-check-label" for="is_active">Ativo</label>
           </div>
 

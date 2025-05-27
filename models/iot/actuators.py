@@ -49,16 +49,16 @@ class Actuator(db.Model):
 
     @staticmethod
     def update_actuator(id, name, brand, model, topic, unit, is_active):
-        device = Device.query.get(id)
-        actuator = Actuator.query.filter_by(device_id=id).first()
+        device = Device.query.filter(Device.id == id).first()
+        actuator = Actuator.query.filter(Actuator.device_id == id).first()
 
-        if device and actuator:
+        if device is not None:
             device.name = name
             device.brand = brand
             device.model = model
-            device.is_active = is_active
             actuator.topic = topic
             actuator.unit = unit
+            device.is_active = is_active
             db.session.commit()
 
         return Actuator.get_actuators()

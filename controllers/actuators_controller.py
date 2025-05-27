@@ -40,7 +40,7 @@ def edit_actuator(id):
 
     return render_template("update_actuator.html", actuator=actuator)
 
-@actuator_.route('/update_actuator', methods=['POST', 'GET'])
+@actuator_.route('/update_actuator', methods=['POST'])
 @admin_required
 def update_actuator():
     id = request.form.get("id")
