@@ -6,7 +6,7 @@
         <div class="card">
             <div class="card-header"><h4>Histórico de Leituras</h4></div>
             <div class="card-body">
-                <form action="http://localhost:8081/get_read" method="post">
+                <form action="{{ url_for('read.get_read') }}" method="post">
                     <label for="sensor-select">Sensor:</label>
                     <select id="sensor-select" name="id" class="form-control">
                         {% for sensor in sensors %}

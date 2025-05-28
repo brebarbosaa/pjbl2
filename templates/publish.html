@@ -6,41 +6,62 @@
 <div class="container mt-5 p-4" style="background-color: rgba(255, 255, 255, 0.95); border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
   <h2 class="mb-4">Controle Remoto dos Dispositivos</h2>
 
-  <!-- Controle do LED da Ração -->
-  <div class="mb-4">
-    <h4>Controle do LED da Ração</h4>
-    <div class="input-group">
-      <select class="form-select" id="led-select">
-        <option value="" selected disabled>Selecione um comando</option>
-        <option value="ligar_led">Ligar LED</option>
-        <option value="desligar_led">Desligar LED</option>
-      </select>
-      <button class="btn btn-primary" onclick="enviarComando('sensor/comando', 'led-select')">Enviar</button>
-    </div>
-  </div>
+  <div class="row">
+    <!-- Coluna da esquerda -->
+    <div class="col-md-6">
+      <!-- Controle do LED da Ração -->
+      <div class="mb-4">
+        <h4>Controle do LED da Ração</h4>
+        <div class="input-group">
+          <select class="form-select" id="led-select">
+            <option value="" selected disabled>Selecione um comando</option>
+            <option value="ligar_led">Ligar LED</option>
+            <option value="desligar_led">Desligar LED</option>
+          </select>
+          <button class="btn btn-primary" onclick="enviarComando('sensor/comando', 'led-select')">Enviar</button>
+        </div>
+      </div>
 
-  <!-- Controle do Sensor de Movimento -->
-  <div class="mb-4">
-    <h4>Controle do Sensor de Movimento</h4>
-    <div class="input-group">
-      <select class="form-select" id="movimento-select">
-        <option value="" selected disabled>Selecione um comando</option>
-        <option value="forcar_movimento">Forçar Movimento</option>
-        <option value="forcar_repouso">Forçar Repouso</option>
-      </select>
-      <button class="btn btn-primary" onclick="enviarComando('sensor/comando2', 'movimento-select')">Enviar</button>
+      <!-- Controle do Sensor de Movimento -->
+      <div class="mb-4">
+        <h4>Controle do Sensor de Movimento</h4>
+        <div class="input-group">
+          <select class="form-select" id="movimento-select">
+            <option value="" selected disabled>Selecione um comando</option>
+            <option value="forcar_movimento">Forçar Movimento</option>
+            <option value="forcar_repouso">Forçar Repouso</option>
+          </select>
+          <button class="btn btn-primary" onclick="enviarComando('sensor/comando2', 'movimento-select')">Enviar</button>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- Controle do Servo Motor -->
-  <div class="mb-4">
-    <h4>Controle do Servo Motor</h4>
-    <div class="input-group">
-      <select class="form-select" id="servo-select">
-        <option value="" selected disabled>Selecione um comando</option>
-        <option value="despejar">Despejar Ração</option>
-      </select>
-      <button class="btn btn-primary" onclick="enviarComando('comando/racao', 'servo-select')">Enviar</button>
+    <!-- Coluna da direita -->
+    <div class="col-md-6">
+      <!-- Controle do Servo Motor -->
+      <div class="mb-4">
+        <h4>Controle do Servo Motor</h4>
+        <div class="input-group">
+          <select class="form-select" id="servo-select">
+            <option value="" selected disabled>Selecione um comando</option>
+            <option value="despejar">Despejar Ração</option>
+          </select>
+          <button class="btn btn-primary" onclick="enviarComando('comando/racao', 'servo-select')">Enviar</button>
+        </div>
+      </div>
+
+      <!-- Controle do Cooler -->
+      <div class="mb-4">
+        <h4>Controle do Cooler</h4>
+        <div class="input-group">
+          <select class="form-select" id="cooler-select">
+            <option value="" selected disabled>Selecione um comando</option>
+            <option value="ligar_cooler">Ligar Cooler</option>
+            <option value="desligar_cooler">Desligar Cooler</option>
+          </select>
+          <button class="btn btn-primary" onclick="enviarComando('comando/cooler', 'cooler-select')">Enviar</button>
+        </div>
+      </div>
     </div>
   </div>
 

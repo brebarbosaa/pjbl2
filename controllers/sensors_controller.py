@@ -30,11 +30,14 @@ def sensors():
     sensors = Sensor.get_sensors()
     return render_template("sensors.html", sensors=sensors)
 
-@sensor_.route('/edit_sensor')
+@sensor_.route('/edit_sensor/<int:id>', methods=['GET'])
 @admin_required
-def edit_sensor():
-    id = request.args.get('id')
-    sensor = Sensor.query.filter_by(id=id).first()
+def edit_sensor(id):
+    sensor = Sensor.query.filter_by(device_id=id).first()
+
+    if sensor is None or sensor.device is None:
+        return "Sensor não encontrado", 404
+
     return render_template("update_sensor.html", sensor=sensor)
 
 @sensor_.route('/update_sensor', methods=['POST'])

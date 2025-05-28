@@ -50,16 +50,16 @@ class Sensor(db.Model):
 
     @staticmethod
     def update_sensor(id, name, brand, model, topic, unit, is_active):
-        device = Device.query.get(id)
-        sensor = Sensor.query.filter_by(device_id=id).first()
+        device = Device.query.filter(Device.id == id).first()
+        sensor = Sensor.query.filter(Sensor.device_id == id).first()
 
-        if device and sensor:
+        if device is not None:
             device.name = name
             device.brand = brand
             device.model = model
-            device.is_active = is_active
             sensor.topic = topic
             sensor.unit = unit
+            device.is_active = is_active
             db.session.commit()
 
         return Sensor.get_sensors()
