@@ -48,15 +48,19 @@ def del_user():
 
 @user.route('/validated_user', methods=['POST'])
 def validated_user():
-    # FAKE LOGIN TEMPORÁRIO
-    session['username'] = request.form['user']
-    session['is_admin'] = True
-    return redirect(url_for('user.home'))
+    username = request.form['user']
+    password = request.form['password']
 
-    # código original:
-    # username = request.form['user']
-    # password = request.form['password']
-    # ...
+    user = User.query.filter_by(username=username).first()
+
+    if user and user.password == password:
+        # Se o usuário for admin, verifique se já existe outro admin logado (opcional, se quiser garantir 1 admin logado)
+        session['username'] = user.username
+        session['is_admin'] = user.is_admin
+        return redirect(url_for('user.home'))
+
+    return render_template("login.html", error="Credenciais inválidas.")
+
 
 @user.route('/home')
 def home():
@@ -64,13 +68,13 @@ def home():
         return redirect(url_for('user.login'))
     return render_template('home.html', user=session['username'])
 
+# adicionei essa linha só pra conseguir rodar o login.html no meu computador, não sei se ela é realmente necessária - brenda
+@user.route('/login')
+def login():
+    return render_template('login.html')
+
+
 @user.route('/logout')
 def logout():
     session.clear()
     return redirect('/')
-
-@user.route('/home_direct')
-def home_direct():
-    session['username'] = 'teste'
-    session['is_admin'] = True
-    return redirect(url_for('user.home'))
