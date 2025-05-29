@@ -61,11 +61,18 @@ def validated_user():
 
     return render_template("login.html", error="Credenciais inválidas.")
 
+
 @user.route('/home')
 def home():
     if 'username' not in session:
         return redirect(url_for('user.login'))
     return render_template('home.html', user=session['username'])
+
+# adicionei essa linha só pra conseguir rodar o login.html no meu computador, não sei se ela é realmente necessária - brenda
+@user.route('/login')
+def login():
+    return render_template('login.html')
+
 
 @user.route('/logout')
 def logout():
