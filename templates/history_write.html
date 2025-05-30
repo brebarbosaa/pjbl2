@@ -38,7 +38,7 @@
                     <tbody>
                         {% for w in write %}
                         <tr>
-                            <td>{{ w.actuator.name }}</td>  <!-- usar relação -->
+                            <td>{{ w.actuator.device.name }}</td>  <!-- usar relação -->
                             <td>{{ w.value }}</td>
                             <td>{{ w.write_datetime }}</td>
                             <td>{{ w.origin.capitalize() }}</td>

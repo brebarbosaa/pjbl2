@@ -56,6 +56,14 @@ def create_app():
     mqtt_client.init_app(app)
     socketio.init_app(app)
 
+    with app.app_context():
+        atuadores = Actuator.query.all()
+        for a in atuadores:
+            if a.topic_subscribe:
+                print(f"[MQTT] Subscrito no tópico: {a.topic_subscribe}")
+                mqtt_client.subscribe(a.topic_subscribe)
+
+
     # Register Blueprints
     app.register_blueprint(user, url_prefix='/')
     app.register_blueprint(sensor_, url_prefix='/')
@@ -109,7 +117,10 @@ def create_app():
 
             # Gravar no banco como comando manual
             with current_app.app_context():
+                print(f"[DEBUG] Publicando no tópico {topic} com mensagem: {message}")
                 actuator = Actuator.query.filter_by(topic=topic).first()
+                if not actuator:
+                    print("[ERRO] Atuador não encontrado para esse tópico")
                 if actuator:
                     Write.save_write(actuator, message, origin="manual")
 
@@ -129,13 +140,13 @@ def create_app():
 
     @mqtt_client.on_message()
     def handle_mqtt_message(client, userdata, message):
-
         global temperature, humidity, nivel_racao, movimento
-        payload = message.payload.decode()
-        topic = message.topic
-        print(f"Mensagem recebida | Tópico: {topic} | Conteúdo: {payload}")
 
-        # Atualiza valores para tela tempo_real
+        topic = message.topic
+        payload = message.payload.decode()
+        print(f"[DEBUG] Mensagem recebida | Tópico: {topic} | Conteúdo: {payload}")
+
+        # Atualizar dados para tempo real
         if topic == "sensor/temperatura":
             try:
                 temperature = float(payload)
@@ -158,24 +169,41 @@ def create_app():
             "movimento": movimento
         })
 
-        # Salvar leitura ou comando com contexto correto
+        # Salvar leitura ou atuação automática
         with app.app_context():
             try:
+                print(f"[DEBUG] Verificando tópico recebido: {topic}")
+                all_actuators = Actuator.query.all()
+                for a in all_actuators:
+                    device_name = a.device.name if a.device else 'Desconhecido'
+                    print(f"[DEBUG] Atuador {device_name} | topic: {a.topic} | topic_subscribe: {a.topic_subscribe}")
+
                 sensor = Sensor.query.filter_by(topic=topic).first()
                 if sensor:
                     try:
-                        # Extrai só o número no início da mensagem
                         number_str = payload.split()[0]
                         value = float(number_str)
                     except (ValueError, IndexError):
-                        value = payload  # mantém string original se falhar
-
+                        value = payload
                     Read.save_read(sensor, value)
                 else:
-                    actuator = Actuator.query.filter_by(topic=topic).first()
+
+                    print(f"[DEBUG] Tópico recebido: {repr(topic)}")
+                    actuator = Actuator.query.filter(
+                        (Actuator.topic == topic) | (Actuator.topic_subscribe == topic)
+                    ).first()
+                    for a in all_actuators:
+                        print(
+                            f"[DEBUG] Atuador {a.id} | topic: {repr(a.topic)} | topic_subscribe: {repr(a.topic_subscribe)}")
+
                     if actuator:
-                        Write.save_write(actuator, payload)
+                        device_name = actuator.device.name if actuator.device else 'Desconhecido'
+                        print(f"[DEBUG] Atuador encontrado: {device_name}")
+                        origin = "manual" if topic == actuator.topic else "automatico"
+                        Write.save_write(actuator, payload, origin=origin)
+                    else:
+                        print(f"[DEBUG] Atuador encontrado: Nenhum")
             except Exception as e:
-                print("Erro ao salvar leitura ou comando no banco:", str(e))
+                print("[ERRO] Falha ao processar mensagem MQTT:", str(e))
 
     return app

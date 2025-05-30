@@ -17,17 +17,26 @@ class Write(db.Model):
 
     @staticmethod
     def save_write(actuator, value, origin="automatico"):
+        print(f"[DEBUG] Salvando escrita para atuador ID {actuator.id} com valor: {value}")
         device = Device.query.get(actuator.device_id)
-        if device and device.is_active:
-            write = Write(
-                write_datetime=datetime.utcnow(),
-                actuators_id=actuator.id,
-                value=str(value),
-                origin=origin
-            )
-            db.session.add(write)
-            db.session.commit()
-
+        if not device:
+            print("[ERRO] Dispositivo não encontrado")
+        elif not device.is_active:
+            print("[ERRO] Dispositivo está inativo")
+        else:
+            try:
+                write = Write(
+                    write_datetime=datetime.utcnow(),
+                    actuators_id=actuator.id,
+                    value=str(value),
+                    origin=origin
+                )
+                db.session.add(write)
+                db.session.commit()
+                print("[OK] Escrita salva com sucesso")
+            except Exception as e:
+                db.session.rollback()
+                print("[ERRO] Falha ao salvar escrita:", e)
 
     @staticmethod
     def get_write(device_id, start, end):

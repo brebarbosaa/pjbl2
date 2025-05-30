@@ -8,6 +8,7 @@ class Actuator(db.Model):
     device_id = db.Column(db.Integer, db.ForeignKey('device.id'), nullable=False)
     unit = db.Column(db.String(50))
     topic = db.Column(db.String(50))
+    topic_subscribe = db.Column(db.String(100), nullable=True)
 
     device = db.relationship('Device', back_populates='actuators')
 
