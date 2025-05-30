@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Usuários</h2>
 <div class="container mt-5 p-4" style="background-color: rgba(255, 255, 255, 0.95); border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
 <table class="table table-bordered">
   <thead>
     <tr><th>Nome</th><th>Função</th><th>Ações</th></tr>
   </thead>
   <tbody>
-    {% for username, data in users.items() %}
+    {% for user in users %}
     <tr>
-      <td>{{ username }}</td>
-      <td>{{ 'Administrador' if data['is_admin'] else 'Usuário' }}</td>
+      <td>{{ user.username }}</td>
+      <td>{{ user.role.capitalize() }}</td>
       <td>
-        {% if username != 'admin' %}
-          <a href="{{ url_for('user.remove_user', username=username) }}" class="btn btn-danger btn-sm">Excluir</a>
+        {% if user.username != 'admin' %}
+          <a href="{{ url_for('user.edit_user', user_id=user.id) }}" class="btn btn-warning btn-sm">Editar</a>
+          <a href="{{ url_for('user.remove_user', username=user.username) }}" class="btn btn-danger btn-sm">Excluir</a>
         {% endif %}
       </td>
     </tr>

@@ -1,45 +1,41 @@
-<!-- templates/base_login.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
   {% block title %}<title>Login</title>{% endblock %}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/base_login.css') }}">
 </head>
 <body>
 
-  <div class="page">
-    <div class="container">
-      <div class="title">Bem-vindo!</div>
-      <div class="description">
-        Faça login ou clique no botão "saber mais" para mais informações!
-      </div>
-      <div class="button">
-        <a href="{{ url_for('user.login') }}" class="secondary" style="text-decoration: none;">
-          <div class="title2">Login</div>
-        </a>
-        <div class="primary" id="saber-mais">
-          <div class="title3">Saber Mais</div>
-        </div>
-      </div>
-      <!-- texto oculto no saiba mais -->
-      <div id="texto-saber-mais" class="texto-oculto">
-        <p>   Essa aplicação monitora as condições vitais de cavalos em baias e faz parte do projeto extensionista da disciplina de Experiência Criativa, do curso de Ciência da Computação (terceiro período) da Pontifícia Universidade Católica do Paraná.
+  <div class="container">
+    <div class="title">Bem-vindo!</div>
+    <div class="description">
+      Faça login ou clique no botão "Saber mais" para mais informações!
+    </div>
 
-          O objetivo do projeto é fornecer uma ferramenta que coleta e analisa, em tempo real, dados obtidos por sensores e atuadores instalados nas baias, além de permitir o controle de componentes da baia remotamente, garantindo o bem-estar animal.</p>
+    <div class="button">
+      <a href="{{ url_for('user.login') }}" class="secondary">
+        <div class="title2">Login</div>
+      </a>
+      <div class="primary" id="saber-mais">
+        <div class="title3">Saber Mais</div>
       </div>
-        <!-- {% block content %}{% endblock %} -->
+    </div>
+
+    <div id="texto-saber-mais" class="texto-oculto">
+      <p>Essa aplicação monitora as condições vitais de cavalos em baias e faz parte do projeto extensionista da disciplina de Experiência Criativa, do curso de Ciência da Computação (terceiro período) da Pontifícia Universidade Católica do Paraná.</p>
+      <p>O objetivo do projeto é fornecer uma ferramenta que coleta e analisa, em tempo real, dados obtidos por sensores e atuadores instalados nas baias, além de permitir o controle de componentes da baia remotamente, garantindo o bem-estar animal.</p>
     </div>
   </div>
 
-  <!-- script para exibir o texto quando o botão é clicado -->
   <script>
     const botao = document.getElementById('saber-mais');
     const texto = document.getElementById('texto-saber-mais');
 
     botao.addEventListener('click', () => {
-      texto.style.display = texto.style.display === 'none' ? 'block' : 'none';
+      texto.style.display = texto.style.display === 'none' || texto.style.display === '' ? 'block' : 'none';
     });
   </script>
 

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Atualizar Usuário{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card mx-auto shadow" style="max-width: 500px;">
+        <div class="card-header bg-warning text-white">
+            <h5 class="mb-0">Atualizar Usuário</h5>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('user.update_user', user_id=user.id) }}" method="post">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Usuário</label>
+                    <input type="text" id="username" name="username" class="form-control" value="{{ user.username }}" required />
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Nova Senha</label>
+                    <input type="password" id="password" name="password" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label for="role" class="form-label">Função</label>
+                    <select id="role" name="role" class="form-control">
+                        <option value="operador" {% if user.role =='operador' %}selected{% endif %}>Operador</option>
+                        <option value="estatistico" {% if user.role =='estatistico' %}selected{% endif %}>Estatístico</option>
+                        <option value="comum" {% if user.role =='comum' %}selected{% endif %}>Usuário Comum</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-warning">Atualizar</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

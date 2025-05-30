@@ -3,29 +3,31 @@ from models.iot.actuators import Actuator
 from models.iot.devices import Device
 from datetime import datetime
 
+# models/iot/write.py
 class Write(db.Model):
     __tablename__ = 'write'
 
     id = db.Column(db.Integer, primary_key=True)
     write_datetime = db.Column(db.DateTime(), nullable=False)
     actuators_id = db.Column(db.Integer, db.ForeignKey(Actuator.id), nullable=False)
-    value = db.Column(db.Float, nullable=True)
+    value = db.Column(db.String(50), nullable=True)
+    origin = db.Column(db.String(20), nullable=False, default="automatico")
+
+    actuator = db.relationship("Actuator", backref="writes")
 
     @staticmethod
-    def save_write(topic, value):
-        actuator = Actuator.query.filter_by(topic=topic).first()
-        if actuator is None:
-            print(f"[ERRO] Atuador com tópico {topic} não encontrado.")
-            return
+    def save_write(actuator, value, origin="automatico"):
         device = Device.query.get(actuator.device_id)
         if device and device.is_active:
             write = Write(
                 write_datetime=datetime.utcnow(),
                 actuators_id=actuator.id,
-                value=float(value)
+                value=str(value),
+                origin=origin
             )
             db.session.add(write)
             db.session.commit()
+
 
     @staticmethod
     def get_write(device_id, start, end):

@@ -6,75 +6,66 @@
     <title>{% block title %}Devices{% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-  
 </head>
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-      
-          <!-- Logo ou nome da aplicação -->
-          <a class="navbar-brand" href="{{ url_for('home') }}">Home</a>
-      
-          <!-- Botão colapsável -->
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
-            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-      
-          <!-- Itens da navbar -->
-          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              {% if session.get('username') %}
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('tempo_real') }}">Tempo Real</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('publish') }}">Comando</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('sensor_.sensors') }}">Sensores</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('read.history_read') }}">Histórico de Leituras</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('actuator_.actuators') }}">Atuadores</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('write.history_write') }}">Histórico de Atuações</a>
-                </li>
+            <a class="navbar-brand" href="{{ url_for('home') }}">Home</a>
 
-              {% endif %}
-      
-              {% if session.get('is_admin') %}
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('user.list_users') }}">Usuários</a>
-                </li>
-              {% endif %}
-            </ul>
-          </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% if session.get('username') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('tempo_real') }}">Tempo Real</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('publish') }}">Comando</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('sensor_.sensors') }}">Sensores</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('read.history_read') }}">Histórico de Leituras</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('actuator_.actuators') }}">Atuadores</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('write.history_write') }}">Histórico de Atuações</a>
+                        </li>
+                    {% endif %}
+
+                    {% if session.get('role') == 'admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('user.list_users') }}">Usuários</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+
             {% if session.get('username') %}
             <div class="d-flex">
-              <a href="{{ url_for('user.logout') }}" class="btn btn-outline-light" role="button">Sair</a>
+                <a href="{{ url_for('user.logout') }}" class="btn btn-outline-light" role="button">Sair</a>
             </div>
             {% endif %}
-
         </div>
-      </nav>
+    </nav>
 
     <main class="container">
         {% block content %}
         {% endblock %}
     </main>
 
-    <!-- Rodapé -->
     <footer class="bg-dark text-white text-center py-3">
         <p>&copy; 2025 IoT Project. Todos os direitos reservados.</p>
     </footer>
 
-    <!-- Scripts necessários -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

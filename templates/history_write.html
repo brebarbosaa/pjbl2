@@ -32,14 +32,16 @@
                             <th>Atuador</th>
                             <th>Valor</th>
                             <th>Horário</th>
+                            <th>Origem</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for w in write %}
                         <tr>
-                            <td>{{ w.actuators_id }}</td>
+                            <td>{{ w.actuator.name }}</td>  <!-- usar relação -->
                             <td>{{ w.value }}</td>
                             <td>{{ w.write_datetime }}</td>
+                            <td>{{ w.origin.capitalize() }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

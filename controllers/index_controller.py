@@ -5,6 +5,7 @@ from flask_mqtt import Mqtt
 import json
 from models.db import db, instance
 from flask import current_app
+from flask_login import LoginManager
 
 # Importar seus Blueprints
 from controllers.user_controller import user
@@ -16,6 +17,7 @@ from models.iot.read import Read
 from models.iot.sensors import Sensor
 from models.iot.actuators import Actuator
 from models.iot.write import Write
+from models.users.user_model import User
 
 temperature = 0
 humidity = 0
@@ -61,6 +63,13 @@ def create_app():
     app.register_blueprint(read, url_prefix='/')
     app.register_blueprint(write, url_prefix='/')
 
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
+
     @app.route('/')
     def index():
         return render_template("base_login.html")
@@ -97,6 +106,13 @@ def create_app():
         message = request_data['message']
         try:
             mqtt_client.publish(topic, message)
+
+            # Gravar no banco como comando manual
+            with current_app.app_context():
+                actuator = Actuator.query.filter_by(topic=topic).first()
+                if actuator:
+                    Write.save_write(actuator, message, origin="manual")
+
             return json.dumps({"status": "Mensagem publicada com sucesso!"}), 200
         except Exception as e:
             print("Erro ao publicar:", str(e))

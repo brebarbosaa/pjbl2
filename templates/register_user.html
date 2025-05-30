@@ -1,6 +1,4 @@
-<!-- templates/register_user.html -->
 {% extends "base.html" %}
-
 {% block content %}
 <div class="container mt-5">
     <div class="card mx-auto shadow" style="max-width: 500px;">
@@ -8,19 +6,24 @@
             <h5 class="mb-0">Cadastrar Novo Usuário</h5>
         </div>
         <div class="card-body">
-            <form action="{{ url_for('user.add_user') }}" method="POST">
+            <form action="{{ url_for('user.add_user') }}" method="post">
                 <div class="mb-3">
                     <label for="user" class="form-label">Usuário</label>
-                    <input type="text" name="user" id="user" class="form-control" placeholder="Digite o nome de usuário" required>
+                    <input type="text" id="user" name="user" class="form-control" required />
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Senha</label>
-                    <input type="password" name="password" id="password" class="form-control" placeholder="Digite a senha" required>
+                    <input type="password" id="password" name="password" class="form-control" required />
                 </div>
-                <div class="d-flex justify-content-between">
-                    <button type="submit" class="btn btn-success">Cadastrar</button>
-                    <a href="{{ url_for('home') }}" class="btn btn-secondary">Voltar</a>
+                <div class="mb-3">
+                    <label for="role" class="form-label">Função</label>
+                    <select id="role" name="role" class="form-control" required>
+                        <option value="operador">Operador</option>
+                        <option value="estatistico">Estatístico</option>
+                        <option value="comum">Usuário Comum</option>
+                    </select>
                 </div>
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
             </form>
         </div>
     </div>
