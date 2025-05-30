@@ -1,5 +1,5 @@
 # controllers/app_controller.py
-from flask import Flask, render_template, session, request
+from flask import Flask, render_template, session, request, flash
 from flask_socketio import SocketIO
 from flask_mqtt import Mqtt
 import json
@@ -73,24 +73,50 @@ def create_app():
 
     login_manager = LoginManager()
     login_manager.init_app(app)
+    login_manager.login_view = 'user.login'
 
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
 
-    @app.route('/')
-    def index():
-        return render_template("base_login.html")
+    from flask import redirect, url_for
 
-    @app.route('/logoff')
-    def logoff():
-        return render_template("login.html")
+    @app.route('/login', methods=['POST'])
+    def login():
+        username = request.form.get('user')
+        password = request.form.get('password')
+
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            flash('Usuário não encontrado')
+            return redirect(url_for('index'))
+
+        if user.password != password:
+            flash('Senha incorreta')
+            return redirect(url_for('index'))
+
+        session['user'] = user.username
+        session['is_admin'] = (user.role == 'admin')
+
+        return redirect(url_for('home'))  # redireciona, não renderiza direto
 
     @app.route('/home')
     def home():
         user = session.get('user')
+        if not user:
+            return redirect(url_for('index'))
         is_admin = session.get('is_admin', False)
         return render_template('home.html', user=user, is_admin=is_admin)
+
+    @app.route('/logoff')
+    def logoff():
+        session.clear()
+        flash('Você saiu da sessão')
+        return redirect(url_for('index'))
+
+    @app.route('/')
+    def index():
+        return render_template("base_login.html")
 
     @app.route('/tempo_real')
     def tempo_real():

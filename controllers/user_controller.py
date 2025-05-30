@@ -2,7 +2,7 @@ from flask import Blueprint, request, render_template, redirect, session, url_fo
 from models.users.user_model import User
 from models.db import db
 from decorators import admin_required
-from flask_login import login_user
+from flask_login import login_user, login_required, current_user, logout_user
 
 user = Blueprint("user", __name__, template_folder="templates")
 
@@ -94,13 +94,10 @@ def validated_user():
 
     return render_template("login.html", error="Credenciais inválidas.")
 
-
 @user.route('/home')
+@login_required
 def home():
-    if 'username' not in session:
-        return redirect(url_for('user.login'))
-    return render_template('home.html', user=session['username'], role=session.get('role'))
-
+    return render_template('home.html', user=current_user.username, role=current_user.role)
 
 @user.route('/login')
 def login():
@@ -108,6 +105,7 @@ def login():
 
 
 @user.route('/logout')
+@login_required
 def logout():
-    session.clear()
-    return redirect('/')
+    logout_user()
+    return redirect(url_for('user.login'))

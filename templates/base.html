@@ -20,7 +20,7 @@
 
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    {% if session.get('username') %}
+                    {% if current_user.is_authenticated %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('tempo_real') }}">Tempo Real</a>
                         </li>
@@ -41,7 +41,7 @@
                         </li>
                     {% endif %}
 
-                    {% if session.get('role') == 'admin' %}
+                    {% if current_user.role == 'admin' %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('user.list_users') }}">Usuários</a>
                         </li>
@@ -49,7 +49,7 @@
                 </ul>
             </div>
 
-            {% if session.get('username') %}
+            {% if current_user.is_authenticated %}
             <div class="d-flex">
                 <a href="{{ url_for('user.logout') }}" class="btn btn-outline-light" role="button">Sair</a>
             </div>
