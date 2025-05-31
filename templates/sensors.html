@@ -4,7 +4,7 @@
   <table class="table table-bordered">
     <thead>
       <tr><th>Nome</th><th>Marca</th><th>Modelo</th><th>Unidade</th><th>Tópico</th><th>Ativo</th>
-        {% if current_user.role == 'admin' %}<th>Ações</th>{% endif %}
+        {% if current_user.is_authenticated and if current_user.role == 'admin' %}<th>Ações</th>{% endif %}
       </tr>
     </thead>
     <tbody>
@@ -16,7 +16,7 @@
         <td>{{ s.unit }}</td>
         <td>{{ s.topic }}</td>
         <td>{{ 'Sim' if s.is_active else 'Não' }}</td>
-        {% if current_user.role == 'admin' %}
+        {%  if current_user.is_authenticated and if current_user.role == 'admin' %}
         <td>
           <a href="{{ url_for('sensor_.edit_sensor', id=s.device_id) }}" class="btn btn-warning btn-sm">Editar</a>
           <a href="{{ url_for('sensor_.del_sensor', id=s.device_id) }}" class="btn btn-danger btn-sm">Excluir</a>
@@ -27,7 +27,7 @@
     </tbody>
   </table>
 
-  {% if current_user.role == 'admin' %}
+  {% if current_user.is_authenticated and if current_user.role == 'admin' %}
   <a href="{{ url_for('sensor_.register_sensor') }}" class="btn btn-success">Adicionar Sensor</a>
   {% endif %}
 </div>
